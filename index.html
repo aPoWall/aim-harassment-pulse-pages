@@ -1,0 +1,1946 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>aim harassment pulse · local telegram tracker</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --ink: #000000;
+    --paper: #ffffff;
+    --muted: #7a7a7a;
+    --soft: #d9d9d9;
+    --hair: #f2f2f2;
+    --pink: #ff3eb5;
+    --pink-dim: rgba(255, 62, 181, 0.12);
+    --green: #159947;
+    --frame: 1px;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    background:
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.045) 0 1px, transparent 1px 88px),
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.035) 0 1px, transparent 1px 66px),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.45;
+    letter-spacing: 0.04em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    width: 100%;
+    height: 100vh;
+    padding: 28px;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 18px;
+    overflow: hidden;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  header,
+  footer,
+  .panel {
+    background: rgba(255,255,255,0.93);
+    border: var(--frame) solid var(--ink);
+  }
+
+  header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 28px;
+    align-items: end;
+    padding: 16px 18px;
+    text-transform: lowercase;
+  }
+
+  .brand {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .aim-mark {
+    display: inline-grid;
+    place-items: center;
+    position: relative;
+    overflow: hidden;
+    width: 32px;
+    height: 32px;
+    border: var(--frame) solid var(--ink);
+    color: var(--pink);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  .aim-mark::after {
+    content: "";
+    position: absolute;
+    width: 42px;
+    height: 1px;
+    background: var(--pink);
+    transform: rotate(-32deg);
+    opacity: 0.72;
+  }
+
+  .aim-name {
+    display: inline-grid;
+    gap: 0;
+  }
+
+  .aim-name small {
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .crumb,
+  .meta,
+  .src,
+  .stamp {
+    color: var(--muted);
+    font-size: 12px;
+    min-width: 0;
+  }
+
+  .crumb {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .meta,
+  .stamp {
+    justify-self: end;
+    text-align: right;
+  }
+
+  .pink { color: var(--pink); }
+
+  .green { color: var(--green); }
+
+  main {
+    min-height: 0;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(280px, 0.88fr) minmax(500px, 1.46fr) minmax(330px, 0.96fr);
+    gap: 18px;
+  }
+
+  .panel {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .panel-head {
+    border-bottom: var(--frame) solid var(--ink);
+    padding: 14px 16px 12px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .panel-title {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .panel-index {
+    color: var(--pink);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .panel-body {
+    min-height: 0;
+    padding: 16px;
+    overflow: auto;
+    scrollbar-gutter: stable;
+  }
+
+  .stack {
+    display: grid;
+    gap: 14px;
+  }
+
+  .box {
+    border: var(--frame) solid var(--soft);
+    background: rgba(255,255,255,0.74);
+  }
+
+  .box-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: var(--frame) solid var(--soft);
+    padding: 9px 10px;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .box-body {
+    padding: 10px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 4px 0;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .row .k {
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .row .v {
+    text-align: right;
+  }
+
+  .row.hot .k,
+  .row.hot .v {
+    color: var(--pink);
+  }
+
+  .import-line {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+  }
+
+  input[type="file"],
+  input[type="search"],
+  select,
+  textarea {
+    width: 100%;
+    border: var(--frame) solid var(--soft);
+    background: var(--paper);
+    padding: 9px;
+    outline: 0;
+  }
+
+  input[type="file"]:focus,
+  input[type="search"]:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--pink);
+  }
+
+  .control-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .search-field {
+    display: grid;
+    gap: 6px;
+  }
+
+  .hint {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .button {
+    border: var(--frame) solid var(--pink);
+    background: transparent;
+    color: var(--pink);
+    padding: 9px 10px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .button:hover,
+  .button.active {
+    background: var(--pink);
+    color: var(--bg);
+  }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border: var(--frame) solid var(--soft);
+  }
+
+  .score-grid.three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .score-grid.three .score:nth-child(2n) { border-right: var(--frame) solid var(--soft); }
+  .score-grid.three .score:nth-child(3n) { border-right: 0; }
+  .score-grid.three .score:nth-last-child(-n + 3) { border-bottom: 0; }
+
+  .score {
+    min-width: 0;
+    padding: 10px;
+    border-right: var(--frame) solid var(--soft);
+    border-bottom: var(--frame) solid var(--soft);
+  }
+
+  .score:nth-child(2n) { border-right: 0; }
+  .score:nth-last-child(-n + 2) { border-bottom: 0; }
+
+  .score .label,
+  .score .note {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .score .value {
+    color: var(--pink);
+    font-size: 30px;
+    line-height: 1;
+    margin: 8px 0 6px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .meter {
+    display: grid;
+    gap: 9px;
+  }
+
+  .meter-row {
+    display: grid;
+    grid-template-columns: 104px minmax(0, 1fr) 44px;
+    gap: 10px;
+    align-items: center;
+    font-size: 11px;
+    text-transform: lowercase;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bar {
+    height: 7px;
+    border: var(--frame) solid var(--soft);
+    overflow: hidden;
+  }
+
+  .bar span {
+    display: block;
+    height: 100%;
+    width: var(--w);
+    background: var(--ink);
+  }
+
+  .meter-row.hot .bar {
+    border-color: var(--pink);
+  }
+
+  .meter-row.hot .bar span {
+    background: var(--pink);
+  }
+
+  .timeline-shell {
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    gap: 14px;
+  }
+
+  .period-graph,
+  .interpret-graph {
+    display: grid;
+    gap: 8px;
+  }
+
+  .period-graph {
+    max-height: 132px;
+    overflow: hidden;
+  }
+
+  .period-row,
+  .interpret-row {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr) 48px;
+    gap: 10px;
+    align-items: center;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .period-bar,
+  .interpret-bar {
+    height: 10px;
+    border: var(--frame) solid var(--soft);
+    overflow: hidden;
+    background: var(--paper);
+  }
+
+  .period-bar span,
+  .interpret-bar span {
+    display: block;
+    height: 100%;
+    width: var(--w);
+    background: var(--ink);
+  }
+
+  .period-row.hot .period-bar,
+  .interpret-row.hot .interpret-bar {
+    border-color: var(--pink);
+  }
+
+  .period-row.hot .period-bar span,
+  .interpret-row.hot .interpret-bar span {
+    background: var(--pink);
+  }
+
+  .analytics-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  .analytics-item {
+    border-bottom: var(--frame) solid var(--soft);
+    padding-bottom: 8px;
+    font-size: 12px;
+  }
+
+  .analytics-item:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .operator-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .operator {
+    border: var(--frame) solid var(--soft);
+    padding: 10px;
+    min-width: 0;
+  }
+
+  .operator .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: var(--frame) solid var(--pink);
+    color: var(--pink);
+    display: grid;
+    place-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  .operator .name {
+    font-size: 13px;
+  }
+
+  .operator .role {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .phase-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .phase {
+    border: var(--frame) solid var(--ink);
+    padding: 9px;
+    min-height: 66px;
+    background: var(--paper);
+  }
+
+  .phase .n {
+    color: var(--pink);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .phase .t {
+    margin-top: 4px;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+  }
+
+  .timeline {
+    min-height: 0;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    overflow: auto;
+    scrollbar-gutter: stable;
+    padding-right: 4px;
+  }
+
+  .month {
+    border: var(--frame) solid var(--ink);
+  }
+
+  .month-title {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 8px 10px;
+    border-bottom: var(--frame) solid var(--ink);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .message {
+    width: 100%;
+    border: 0;
+    border-bottom: var(--frame) solid var(--soft);
+    background: transparent;
+    padding: 0;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .message:last-child { border-bottom: 0; }
+
+  .message:hover,
+  .message.active {
+    background: var(--pink-dim);
+  }
+
+  .message.active .message-top {
+    background: var(--pink);
+    color: var(--bg);
+    border-color: var(--pink);
+  }
+
+  .message-top {
+    display: grid;
+    grid-template-columns: 78px 82px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    border-bottom: var(--frame) solid var(--soft);
+    padding: 8px 10px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .message-body {
+    padding: 10px;
+  }
+
+  .message-text {
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .message.active .message-text {
+    -webkit-line-clamp: 4;
+  }
+
+  .tracker {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 9px;
+  }
+
+  .track {
+    border: var(--frame) solid var(--soft);
+    padding: 3px 5px;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: lowercase;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .track.hot {
+    color: var(--pink);
+    border-color: var(--pink);
+  }
+
+  .inspector {
+    display: grid;
+    gap: 14px;
+  }
+
+  .selected {
+    border: var(--frame) solid var(--pink);
+    padding: 14px;
+    min-height: 170px;
+    max-height: 170px;
+    overflow: auto;
+    scrollbar-gutter: stable;
+  }
+
+  .selected .time {
+    color: var(--pink);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+
+  .selected .quote {
+    margin-top: 9px;
+    font-size: 17px;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+  }
+
+  .selected .comment {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .hook {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 9px 10px;
+    border-bottom: var(--frame) solid var(--soft);
+    font-size: 12px;
+  }
+
+  .hook:last-child { border-bottom: 0; }
+
+  .hook .state {
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+
+  .hook.hot .state {
+    color: var(--pink);
+  }
+
+  .composer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 70px;
+    max-height: 160px;
+    letter-spacing: 0.03em;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .chip {
+    border: var(--frame) solid var(--soft);
+    padding: 3px 7px;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: lowercase;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .chip.hot {
+    color: var(--pink);
+    border-color: var(--pink);
+  }
+
+  footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 18px;
+    align-items: center;
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+
+  .seeds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .seed {
+    border: var(--frame) solid var(--soft);
+    padding: 2px 7px;
+    color: var(--muted);
+  }
+
+  .seed.active {
+    background: var(--pink);
+    border-color: var(--pink);
+    color: var(--bg);
+  }
+
+  .unlock-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+      rgba(255, 255, 255, 0.96);
+    background-size: 88px 88px;
+  }
+
+  .unlock-screen[hidden] {
+    display: none;
+  }
+
+  .unlock-card {
+    width: min(520px, 100%);
+    border: 1px solid var(--black);
+    background: #fff;
+    padding: 22px;
+    box-shadow: 10px 10px 0 var(--black);
+  }
+
+  .unlock-title {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .unlock-copy {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .unlock-form {
+    display: grid;
+    grid-template-columns: 1fr 120px;
+    gap: 10px;
+  }
+
+  .unlock-error {
+    margin-top: 12px;
+    color: var(--pink);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 1180px) {
+    body {
+      height: auto;
+      min-height: 100vh;
+      overflow: auto;
+      padding: 18px;
+    }
+
+    header,
+    footer {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .meta,
+    .stamp {
+      justify-self: start;
+      text-align: left;
+    }
+
+    main {
+      grid-template-columns: 1fr;
+      overflow: visible;
+    }
+
+    .phase-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    body {
+      padding: 12px;
+      gap: 12px;
+      overflow-x: hidden;
+    }
+
+    .brand {
+      font-size: 14px;
+      white-space: normal;
+    }
+
+    .crumb,
+    .meta,
+    .src,
+    .stamp {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .panel-body { padding: 12px; }
+
+    .box-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .control-grid,
+    .phase-grid,
+    .score-grid,
+    .tracker,
+    .composer,
+    .message-top,
+    .meter-row,
+    .row,
+    .hook {
+      grid-template-columns: 1fr;
+    }
+
+    .score {
+      border-right: 0;
+      border-bottom: var(--frame) solid var(--soft);
+    }
+
+    .score:last-child { border-bottom: 0; }
+
+    .score-grid.three .score:nth-child(2n),
+    .score-grid.three .score:nth-child(3n) {
+      border-right: 0;
+    }
+
+    .score-grid.three .score:nth-last-child(-n + 3) {
+      border-bottom: var(--frame) solid var(--soft);
+    }
+
+    .score-grid.three .score:last-child {
+      border-bottom: 0;
+    }
+
+    .row .v {
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    .button { min-height: 42px; }
+
+    .unlock-form {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="unlock-screen" id="unlockScreen" hidden>
+    <div class="unlock-card">
+      <div class="unlock-title">private ledger unlock</div>
+      <div class="unlock-copy">GitHub Pages shell is public. Telegram history is encrypted client-side and opens only with the private passphrase.</div>
+      <form class="unlock-form" id="unlockForm">
+        <input id="unlockPassword" type="password" autocomplete="current-password" placeholder="private passphrase">
+        <button class="button active" type="submit">unlock</button>
+      </form>
+      <div class="unlock-error" id="unlockError"></div>
+    </div>
+  </div>
+
+  <header>
+    <div class="brand">
+      <span class="aim-mark">AI</span>
+      <span class="aim-name"><span>aim harassment pulse</span><small>AI Mindset</small></span>
+    </div>
+    <div class="crumb">direct telegram api · latest-first tracker · encrypted pages · <span class="pink">pink pulse</span></div>
+    <div class="meta"><span class="pink">v0.7</span> · 2026-05-11 · personal ledger</div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">local archive</div>
+        <div class="panel-index">fig. 1a</div>
+      </div>
+      <div class="panel-body stack">
+        <div class="box">
+          <div class="box-head"><span>telegram mtproto/api direct</span><span class="pink">connected</span></div>
+          <div class="box-body import-line">
+            <div class="row"><span class="k">dialog</span><span class="v" id="dialogLabel">encrypted dialog · unlock required</span></div>
+            <div class="row hot"><span class="k">messages</span><span class="v" id="sourceMessages">loading</span></div>
+            <div class="row"><span class="k">history range</span><span class="v" id="sourceRange">loading</span></div>
+            <div class="row"><span class="k">exported</span><span class="v" id="sourceExported">loading</span></div>
+            <div class="row hot"><span class="k">screenshots</span><span class="v">disabled</span></div>
+            <div class="row"><span class="k">storage</span><span class="v">personal app data ledger</span></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>github pages</span><span class="green">green check</span></div>
+          <div class="box-body import-line">
+            <div class="row"><span class="k">repo</span><span class="v">personal private</span></div>
+            <div class="row hot"><span class="k">web</span><span class="v">encrypted bundle only</span></div>
+            <div class="row"><span class="k">raw chat</span><span class="v">not in pages source</span></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>range controls</span><span id="rangeLabel">mar–may seed</span></div>
+          <div class="box-body stack">
+            <div class="search-field">
+              <input id="searchInput" type="search" placeholder="search messages: бал, демо, backroom, harassment">
+              <div class="hint" id="searchHint">search scans text, tags, actor and media labels</div>
+            </div>
+            <div class="control-grid">
+              <select id="rangeSelect"></select>
+              <select id="actorSelect">
+                <option value="all">all actors</option>
+                <option value="alex">alex</option>
+                <option value="vlada">vlada</option>
+              </select>
+            </div>
+            <button class="button active" id="resetButton" type="button">show latest api history</button>
+          </div>
+        </div>
+
+        <div class="score-grid" aria-label="global score">
+          <div class="score">
+            <div class="label">alex score</div>
+            <div class="value" id="alexScore">00</div>
+            <div class="note">punch + care</div>
+          </div>
+          <div class="score">
+            <div class="label">vlada score</div>
+            <div class="value" id="vladaScore">00</div>
+            <div class="note">counter + boundary</div>
+          </div>
+          <div class="score">
+            <div class="label">messages</div>
+            <div class="value" id="messageCount">00</div>
+            <div class="note">filtered</div>
+          </div>
+          <div class="score">
+            <div class="label">net care</div>
+            <div class="value" id="careScore">00</div>
+            <div class="note">anti-cringe buffer</div>
+          </div>
+        </div>
+
+        <div class="score-grid three" aria-label="hammer score">
+          <div class="score">
+            <div class="label">hammer</div>
+            <div class="value" id="hammerTotal">00</div>
+            <div class="note">formula total</div>
+          </div>
+          <div class="score">
+            <div class="label">alex hammer</div>
+            <div class="value" id="hammerAlex">00</div>
+            <div class="note">operator side</div>
+          </div>
+          <div class="score">
+            <div class="label">vlada hammer</div>
+            <div class="value" id="hammerVlada">00</div>
+            <div class="note">counter side</div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>game description</span><span>draft rules</span></div>
+          <div class="box-body">
+            <div class="row"><span class="k">goal</span><span class="v">track mutual punches without losing care</span></div>
+            <div class="row"><span class="k">unit</span><span class="v">one telegram message</span></div>
+            <div class="row"><span class="k">round</span><span class="v">day / month / thread burst</span></div>
+            <div class="row hot"><span class="k">win condition</span><span class="v">funny + safe + repeatable</span></div>
+            <div class="row"><span class="k">fail condition</span><span class="v">public leak / real pressure</span></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>VATAP operators</span><span>not telegram</span></div>
+          <div class="box-body operator-grid">
+            <div class="operator">
+              <div class="avatar">AX</div>
+              <div class="name">alex / codex</div>
+              <div class="role">private analysis overlay · not a telegram actor</div>
+            </div>
+            <div class="operator">
+              <div class="avatar">CL</div>
+              <div class="name">Claude</div>
+              <div class="role">second-pass replica · excluded from telegram import</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>aggregate pulse</span><span id="pulseLabel">seed</span></div>
+          <div class="box-body meter">
+            <div class="meter-row hot"><span>punch</span><div class="bar"><span id="punchBar" style="--w:0%"></span></div><span id="punchValue">0.00</span></div>
+            <div class="meter-row"><span>boundary</span><div class="bar"><span id="boundaryBar" style="--w:0%"></span></div><span id="boundaryValue">0.00</span></div>
+            <div class="meter-row hot"><span>absurdity</span><div class="bar"><span id="absurdBar" style="--w:0%"></span></div><span id="absurdValue">0.00</span></div>
+            <div class="meter-row"><span>risk</span><div class="bar"><span id="riskBar" style="--w:0%"></span></div><span id="riskValue">0.00</span></div>
+            <div class="meter-row hot"><span>care</span><div class="bar"><span id="careBar" style="--w:0%"></span></div><span id="careValue">0.00</span></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>hammer formula</span><span>clear read</span></div>
+          <div class="box-body analytics-list">
+            <div class="analytics-item"><span class="pink">formula</span><br><span id="hammerFormula">loading</span></div>
+            <div class="analytics-item"><span class="pink">top modes</span><br><span id="hammerModes">loading</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">latest timeline</div>
+        <div class="panel-index">fig. 1b · newest first</div>
+      </div>
+      <div class="panel-body">
+        <div class="timeline-shell">
+          <div class="box">
+            <div class="box-head"><span>pipeline</span><span>direct API → encrypted ledger</span></div>
+            <div class="box-body phase-grid">
+              <div class="phase"><div class="n">01</div><div class="t">pull telegram api</div></div>
+              <div class="phase"><div class="n">02</div><div class="t">normalize messages</div></div>
+              <div class="phase"><div class="n">03</div><div class="t">tag punch / care</div></div>
+              <div class="phase"><div class="n">04</div><div class="t">score both sides</div></div>
+              <div class="phase"><div class="n">05</div><div class="t">newest first</div></div>
+              <div class="phase"><div class="n">06</div><div class="t">encrypt pages</div></div>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="box-head"><span>period graph</span><span id="periodGraphLabel">all history</span></div>
+            <div class="box-body period-graph" id="periodGraph"></div>
+          </div>
+
+          <div class="timeline" id="timeline"></div>
+
+          <div class="box">
+            <div class="box-head"><span>manual append</span><span>fresh message</span></div>
+            <div class="box-body">
+              <div class="composer">
+                <textarea id="manualInput" placeholder="вставь новое telegram-сообщение или цитату. оно добавится как live event в timeline"></textarea>
+                <button class="button" id="manualButton" type="button">add</button>
+              </div>
+              <div class="chips" id="liveChips">
+                <span class="chip hot">historical seed</span>
+                <span class="chip">full dump ready</span>
+                <span class="chip">no screenshots</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div class="panel-title">message tracker</div>
+        <div class="panel-index">fig. 1c</div>
+      </div>
+      <div class="panel-body inspector">
+        <div class="selected">
+          <div class="time" id="selectedTime">select message</div>
+          <div class="time" id="selectedMode">interpretation pending</div>
+          <div class="quote" id="selectedQuote">per-message tracker</div>
+          <div class="comment" id="selectedComment">каждое сообщение получает punch, boundary, care, risk и absurdity score.</div>
+        </div>
+
+        <div class="score-grid">
+          <div class="score">
+            <div class="label">punch</div>
+            <div class="value" id="selectedPunch">00</div>
+            <div class="note">attack / tease</div>
+          </div>
+          <div class="score">
+            <div class="label">boundary</div>
+            <div class="value" id="selectedBoundary">00</div>
+            <div class="note">stop / caution</div>
+          </div>
+          <div class="score">
+            <div class="label">care</div>
+            <div class="value" id="selectedCare">00</div>
+            <div class="note">repair / safety</div>
+          </div>
+          <div class="score">
+            <div class="label">risk</div>
+            <div class="value" id="selectedRisk">00</div>
+            <div class="note">public / cringe</div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>interpretation graph</span><span>selected message</span></div>
+          <div class="box-body interpret-graph">
+            <div class="interpret-row hot"><span>punch</span><div class="interpret-bar"><span id="selectedPunchGraph" style="--w:0%"></span></div><span id="selectedPunchValue">0</span></div>
+            <div class="interpret-row"><span>boundary</span><div class="interpret-bar"><span id="selectedBoundaryGraph" style="--w:0%"></span></div><span id="selectedBoundaryValue">0</span></div>
+            <div class="interpret-row hot"><span>care</span><div class="interpret-bar"><span id="selectedCareGraph" style="--w:0%"></span></div><span id="selectedCareValue">0</span></div>
+            <div class="interpret-row"><span>risk</span><div class="interpret-bar"><span id="selectedRiskGraph" style="--w:0%"></span></div><span id="selectedRiskValue">0</span></div>
+            <div class="interpret-row hot"><span>absurd</span><div class="interpret-bar"><span id="selectedAbsurdGraph" style="--w:0%"></span></div><span id="selectedAbsurdValue">0</span></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>formulation signals</span><span id="formulaState">none</span></div>
+          <div class="box-body analytics-list" id="formulaSignals"></div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>replica pass</span><span id="replicaState">local v1</span></div>
+          <div class="box-body analytics-list" id="replicaSignals"></div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>period analytics</span><span id="analyticsState">filtered</span></div>
+          <div class="box-body analytics-list" id="periodAnalytics"></div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>pattern shots</span><span id="patternState">live</span></div>
+          <div class="box-body analytics-list" id="patternShots"></div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>scoring framework</span><span>formulation-based</span></div>
+          <div class="hook hot"><span>punch: witty jab, nickname, absurd machine name</span><span class="state">+1..+3</span></div>
+          <div class="hook"><span>counter-punch: answer that returns the energy</span><span class="state">+1..+3</span></div>
+          <div class="hook"><span>boundary: careful warning, opt-out, demo caution</span><span class="state">+1..+3</span></div>
+          <div class="hook hot"><span>care save: gratitude, channel move, repair</span><span class="state">+1..+3</span></div>
+          <div class="hook"><span>risk: public infra, unclear consent, context leak</span><span class="state">-1..-3</span></div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>camera mode</span><span>one-thread brief</span></div>
+          <div class="hook hot"><span>show only selected pair: alex ↔ vlada</span><span class="state">on</span></div>
+          <div class="hook"><span>hide screenshots, show text ledger</span><span class="state">on</span></div>
+          <div class="hook"><span>collapse sensitive lines into score cards</span><span class="state">ready</span></div>
+          <div class="hook"><span>build report by month, then by round</span><span class="state">ready</span></div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>selected tags</span><span id="tagState">none</span></div>
+          <div class="box-body chips" id="selectedTags"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="seeds">
+      <span class="seed active">latest first</span>
+      <span class="seed">direct api</span>
+      <span class="seed">per-message tracker</span>
+      <span class="seed">green github</span>
+      <span class="seed">camera brief</span>
+    </div>
+    <div class="src">source · direct telegram api · encrypted pages · no screenshots · ai mindset</div>
+    <div class="stamp">fig. 1 · b/w + pink · v0.7</div>
+  </footer>
+
+<script>
+  const seedMessages = [
+    {
+      id: "m-2026-03-14-01",
+      date: "2026-03-14T12:18:00",
+      actor: "alex",
+      text: "encrypted seed message: absurd punch enters the scoreboard",
+      tags: ["machine", "naming", "punch"],
+      punch: 2,
+      boundary: 0,
+      care: 1,
+      risk: 1,
+      absurdity: 3,
+      scoreAlex: 3,
+      scoreVlada: 0,
+      comment: "neutral demo row. unlock the encrypted ledger to show the real message."
+    },
+    {
+      id: "m-2026-03-18-01",
+      date: "2026-03-18T19:42:00",
+      actor: "vlada",
+      text: "encrypted seed message: boundary sets publication rules",
+      tags: ["boundary", "infra", "care"],
+      punch: 1,
+      boundary: 3,
+      care: 2,
+      risk: 2,
+      absurdity: 2,
+      scoreAlex: 0,
+      scoreVlada: 4,
+      comment: "neutral demo row. unlock the encrypted ledger to show the real message."
+    },
+    {
+      id: "m-2026-04-03-01",
+      date: "2026-04-03T10:07:00",
+      actor: "alex",
+      text: "encrypted seed message: private backroom lowers public risk",
+      tags: ["backroom", "safety", "punch"],
+      punch: 2,
+      boundary: 1,
+      care: 3,
+      risk: 1,
+      absurdity: 3,
+      scoreAlex: 5,
+      scoreVlada: 0,
+      comment: "neutral demo row. unlock the encrypted ledger to show the real message."
+    },
+    {
+      id: "m-2026-04-17-01",
+      date: "2026-04-17T21:26:00",
+      actor: "vlada",
+      text: "encrypted seed message: counter-punch returns the score",
+      tags: ["counter", "attention-score", "punch"],
+      punch: 3,
+      boundary: 1,
+      care: 1,
+      risk: 1,
+      absurdity: 3,
+      scoreAlex: 0,
+      scoreVlada: 5,
+      comment: "neutral demo row. unlock the encrypted ledger to show the real message."
+    },
+    {
+      id: "m-2026-04-29-01",
+      date: "2026-04-29T17:53:00",
+      actor: "alex",
+      text: "encrypted seed message: scoreboard measures formulations, not people",
+      tags: ["rules", "scoreboard", "care"],
+      punch: 1,
+      boundary: 2,
+      care: 3,
+      risk: 1,
+      absurdity: 2,
+      scoreAlex: 4,
+      scoreVlada: 0,
+      comment: "neutral demo row. unlock the encrypted ledger to show the real message."
+    },
+    {
+      id: "m-2026-05-11-01",
+      date: "2026-05-11T18:43:00",
+      actor: "alex",
+      text: "encrypted seed message: dashboard title enters the ledger",
+      tags: ["seed", "title", "punch"],
+      punch: 3,
+      boundary: 0,
+      care: 0,
+      risk: 2,
+      absurdity: 3,
+      scoreAlex: 3,
+      scoreVlada: 0,
+      comment: "neutral demo row. unlock the encrypted ledger to show the real message."
+    },
+    {
+      id: "m-2026-05-11-02",
+      date: "2026-05-11T18:43:30",
+      actor: "vlada",
+      text: "encrypted seed message: demo mode gets a caution flag",
+      tags: ["boundary", "demo", "care"],
+      punch: 0,
+      boundary: 3,
+      care: 2,
+      risk: 2,
+      absurdity: 1,
+      scoreAlex: 0,
+      scoreVlada: 4,
+      comment: "neutral demo row. unlock the encrypted ledger to show the real message."
+    },
+    {
+      id: "m-2026-05-11-03",
+      date: "2026-05-11T18:44:00",
+      actor: "vlada",
+      text: "encrypted seed message: attention score joke is hidden",
+      tags: ["counter", "score", "attention"],
+      punch: 3,
+      boundary: 1,
+      care: 1,
+      risk: 1,
+      absurdity: 3,
+      scoreAlex: 0,
+      scoreVlada: 5,
+      comment: "neutral demo row. unlock the encrypted ledger to show the real message."
+    }
+  ];
+
+  let historyPayload = window.VLADA_HISTORY || null;
+  let hammerAnalysis = window.HAMMER_ANALYSIS || null;
+  let loadedMessages = Array.isArray(historyPayload?.messages) ? historyPayload.messages : [];
+  let messages = loadedMessages.length ? loadedMessages : [...seedMessages];
+  let filteredMessages = [];
+  let selectedId = messages[messages.length - 1]?.id;
+  let searchQuery = "";
+
+  const byId = (id) => document.getElementById(id);
+  const timeline = byId("timeline");
+
+  function pad(value) {
+    return String(value).padStart(2, "0");
+  }
+
+  function monthKey(dateString) {
+    return dateString.slice(0, 7);
+  }
+
+  function monthLabel(key) {
+    const [year, month] = key.split("-");
+    const names = {
+      "01": "jan", "02": "feb", "03": "mar", "04": "apr", "05": "may", "06": "jun",
+      "07": "jul", "08": "aug", "09": "sep", "10": "oct", "11": "nov", "12": "dec"
+    };
+    return `${names[month]} ${year}`;
+  }
+
+  function renderSourceMeta() {
+    const first = messages[0];
+    const last = messages[messages.length - 1];
+    const dialog = historyPayload?.dialog;
+    byId("dialogLabel").textContent = dialog?.name ? `${dialog.name} · @${dialog.username || "private"}` : "encrypted dialog · unlock required";
+    byId("sourceMessages").textContent = String(messages.length);
+    byId("sourceRange").textContent = first && last ? `${formatStamp(first.date).slice(0, 10)} → ${formatStamp(last.date).slice(0, 10)}` : "empty";
+    byId("sourceExported").textContent = historyPayload?.exportedAt ? formatStamp(historyPayload.exportedAt) : "seed";
+    if (hammerAnalysis) {
+      byId("hammerFormula").textContent = "H = 1.6P + 1.3A + 0.9C + 0.7B - 0.8R";
+      byId("hammerModes").textContent = hammerAnalysis.modes.slice(0, 5).map(([mode, count]) => `${mode}:${count}`).join(" · ");
+    } else {
+      byId("hammerFormula").textContent = "seed formula; unlock encrypted ledger or open local file version";
+      byId("hammerModes").textContent = "seed";
+    }
+  }
+
+  function setDashboardData(payload, summary) {
+    historyPayload = payload || null;
+    hammerAnalysis = summary || null;
+    loadedMessages = Array.isArray(historyPayload?.messages) ? historyPayload.messages : [];
+    messages = loadedMessages.length ? loadedMessages : [...seedMessages];
+    selectedId = messages[messages.length - 1]?.id;
+    searchQuery = "";
+    byId("searchInput").value = "";
+    populateRangeOptions();
+    byId("rangeSelect").value = "all";
+    byId("actorSelect").value = "all";
+    applyFilters();
+  }
+
+  function populateRangeOptions() {
+    const select = byId("rangeSelect");
+    const current = select.value || "all";
+    const months = [...new Set(messages.map((message) => monthKey(message.date)))].sort().reverse();
+    select.innerHTML = [
+      '<option value="all">all history</option>',
+      ...months.map((month) => `<option value="${month}">${monthLabel(month)}</option>`)
+    ].join("");
+    select.value = months.includes(current) || current === "all" ? current : "all";
+  }
+
+  function formatStamp(dateString) {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function normalizeTelegramText(value) {
+    if (Array.isArray(value)) {
+      return value.map((part) => typeof part === "string" ? part : part.text || "").join("");
+    }
+    return value || "";
+  }
+
+  function classifyMessage(text, actor, date, index) {
+    const lower = text.toLowerCase();
+    const has = (...words) => words.some((word) => lower.includes(word));
+    const punch = Number(has("подъ", "бал", "внимани", "harassment", "пульс", "score", "счет")) + Number(has("не буду", "машин", "прибор")) + Number(has("отнимешь", "уволится"));
+    const boundary = Number(has("аккурат", "не добавляй", "нельзя", "не надо", "публич", "демо", "осторож")) + Number(has("backroom", "общую инфру"));
+    const care = Number(has("спасибо", "пониман", "беречь", "аккурат", "backroom", "не публич")) + Number(has("safe", "care"));
+    const risk = Number(has("общую", "публич", "демо", "уволится", "harassment")) + Number(has("скрин", "инфру"));
+    const absurdity = Number(has("машин", "прибор", "пульс", "бал", "счет", "harassment")) + Number(has("private joke", "internal panic"));
+    const tags = [];
+    if (punch) tags.push("punch");
+    if (boundary) tags.push("boundary");
+    if (care) tags.push("care");
+    if (risk) tags.push("risk");
+    if (absurdity) tags.push("absurd");
+    if (!tags.length) tags.push("plain");
+
+    const isVlada = actor.toLowerCase().includes("vlada") || actor.toLowerCase().includes("влада");
+    const score = punch + care + boundary - Math.max(0, risk - 1);
+
+    return {
+      id: `import-${date}-${index}`,
+      date,
+      actor: isVlada ? "vlada" : "alex",
+      text,
+      tags,
+      punch: Math.min(3, punch),
+      boundary: Math.min(3, boundary),
+      care: Math.min(3, care),
+      risk: Math.min(3, risk),
+      absurdity: Math.min(3, absurdity),
+      scoreAlex: isVlada ? 0 : Math.max(0, score),
+      scoreVlada: isVlada ? Math.max(0, score) : 0,
+      comment: "auto-classified from local Telegram export. scoring is a draft until manually reviewed."
+    };
+  }
+
+  function searchableText(message) {
+    return [
+      message.text,
+      message.actor,
+      message.fromName,
+      message.media,
+      ...(message.tags || [])
+    ].filter(Boolean).join(" ").toLowerCase();
+  }
+
+  function messageMatchesSearch(message) {
+    if (!searchQuery) return true;
+    const haystack = searchableText(message);
+    return searchQuery.split(/\s+/).filter(Boolean).every((part) => haystack.includes(part));
+  }
+
+  function applyFilters() {
+    const range = byId("rangeSelect").value;
+    const actor = byId("actorSelect").value;
+    filteredMessages = messages.filter((message) => {
+      const rangeOk = range === "all" || monthKey(message.date) === range;
+      const actorOk = actor === "all" || message.actor === actor;
+      const searchOk = messageMatchesSearch(message);
+      return rangeOk && actorOk && searchOk;
+    });
+
+    if (!filteredMessages.some((message) => message.id === selectedId)) {
+      selectedId = filteredMessages[0]?.id || messages[messages.length - 1]?.id;
+    }
+
+    byId("rangeLabel").textContent = range === "all" ? "all history" : monthLabel(range);
+    byId("searchHint").textContent = searchQuery ? `${filteredMessages.length} matches for "${searchQuery}"` : "search scans text, tags, actor and media labels";
+    renderSourceMeta();
+    render();
+  }
+
+  function aggregate(list) {
+    const total = list.length || 1;
+    const sum = (key) => list.reduce((acc, message) => acc + message[key], 0);
+    return {
+      alex: sum("scoreAlex"),
+      vlada: sum("scoreVlada"),
+      care: sum("care"),
+      hammer: sum("hammer"),
+      hammerAlex: list.reduce((acc, message) => acc + (message.actor === "alex" ? (message.hammer || 0) : 0), 0),
+      hammerVlada: list.reduce((acc, message) => acc + (message.actor === "vlada" ? (message.hammer || 0) : 0), 0),
+      punch: sum("punch") / (total * 3),
+      boundary: sum("boundary") / (total * 3),
+      absurdity: sum("absurdity") / (total * 3),
+      risk: sum("risk") / (total * 3),
+      careRatio: sum("care") / (total * 3)
+    };
+  }
+
+  function setMeter(name, value) {
+    const clamped = Math.max(0, Math.min(1, value));
+    byId(`${name}Bar`).style.setProperty("--w", `${Math.round(clamped * 100)}%`);
+    byId(`${name}Value`).textContent = clamped.toFixed(2);
+  }
+
+  function renderScore() {
+    const data = aggregate(filteredMessages);
+    byId("alexScore").textContent = pad(data.alex);
+    byId("vladaScore").textContent = pad(data.vlada);
+    byId("messageCount").textContent = pad(filteredMessages.length);
+    byId("careScore").textContent = pad(data.care);
+    byId("hammerTotal").textContent = String(Math.round(data.hammer));
+    byId("hammerAlex").textContent = String(Math.round(data.hammerAlex));
+    byId("hammerVlada").textContent = String(Math.round(data.hammerVlada));
+    byId("pulseLabel").textContent = loadedMessages.length ? "mcp" : "seed";
+    setMeter("punch", data.punch);
+    setMeter("boundary", data.boundary);
+    setMeter("absurd", data.absurdity);
+    setMeter("risk", data.risk);
+    setMeter("care", data.careRatio);
+  }
+
+  function bucketKey(message) {
+    const range = byId("rangeSelect").value;
+    return range === "all" ? monthKey(message.date) : message.date.slice(0, 10);
+  }
+
+  function compactBucketLabel(key) {
+    if (key.length === 7) return monthLabel(key);
+    return key.slice(5);
+  }
+
+  function renderPeriodGraph() {
+    const graph = byId("periodGraph");
+    const buckets = new Map();
+    filteredMessages.forEach((message) => {
+      const key = bucketKey(message);
+      if (!buckets.has(key)) {
+        buckets.set(key, { key, count: 0, punch: 0, boundary: 0, care: 0, risk: 0, absurdity: 0 });
+      }
+      const bucket = buckets.get(key);
+      bucket.count += 1;
+      bucket.punch += message.punch;
+      bucket.boundary += message.boundary;
+      bucket.care += message.care;
+      bucket.risk += message.risk;
+      bucket.absurdity += message.absurdity;
+    });
+
+    const rows = [...buckets.values()].sort((a, b) => a.key.localeCompare(b.key));
+    const max = Math.max(1, ...rows.map((row) => row.count));
+    const visible = rows.slice(-14);
+
+    graph.innerHTML = visible.map((row) => {
+      const intensity = row.punch + row.absurdity + row.care;
+      const hot = intensity / Math.max(1, row.count) > 0.72;
+      return `
+        <div class="period-row${hot ? " hot" : ""}">
+          <span>${compactBucketLabel(row.key)}</span>
+          <div class="period-bar"><span style="--w:${Math.max(3, Math.round(row.count / max * 100))}%"></span></div>
+          <span>${row.count}</span>
+        </div>
+      `;
+    }).join("") || '<div class="hint">no period data</div>';
+
+    byId("periodGraphLabel").textContent = byId("rangeSelect").value === "all" ? "monthly count" : "daily count";
+  }
+
+  function analyticsLine(label, value) {
+    return `<div class="analytics-item"><span class="pink">${label}</span><br>${value}</div>`;
+  }
+
+  function renderPeriodAnalytics() {
+    const total = filteredMessages.length || 1;
+    const data = aggregate(filteredMessages);
+    const actorCounts = filteredMessages.reduce((acc, message) => {
+      acc[message.actor] = (acc[message.actor] || 0) + 1;
+      return acc;
+    }, {});
+    const hotMessages = filteredMessages
+      .filter((message) => message.punch + message.boundary + message.absurdity + message.care >= 4)
+      .length;
+    const topTagCounts = new Map();
+    const replicaCounts = new Map();
+    filteredMessages.forEach((message) => (message.tags || []).forEach((tag) => topTagCounts.set(tag, (topTagCounts.get(tag) || 0) + 1)));
+    filteredMessages.forEach((message) => {
+      const verdict = replicaFor(message).verdict;
+      replicaCounts.set(verdict, (replicaCounts.get(verdict) || 0) + 1);
+    });
+    const topTags = [...topTagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([tag, count]) => `${tag}:${count}`).join(" · ") || "none";
+    const topReplica = [...replicaCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 4).map(([tag, count]) => `${tag}:${count}`).join(" · ") || "none";
+
+    byId("analyticsState").textContent = `${filteredMessages.length} msg`;
+    byId("periodAnalytics").innerHTML = [
+      analyticsLine("activity", `${actorCounts.alex || 0} alex / ${actorCounts.vlada || 0} vlada`),
+      analyticsLine("formula read", `H ${Math.round(data.hammer)} · P ${(data.punch).toFixed(2)} · B ${(data.boundary).toFixed(2)} · C ${(data.careRatio).toFixed(2)} · R ${(data.risk).toFixed(2)}`),
+      analyticsLine("shot messages", `${hotMessages}/${total} intensity ≥ 4`),
+      analyticsLine("tags", topTags),
+      analyticsLine("replica", topReplica)
+    ].join("");
+  }
+
+  function renderPatternShots() {
+    const patterns = [
+      {
+        key: "risk-boundary",
+        label: "risk → private",
+        test: (message) => replicaFor(message).verdict === "risk-boundary",
+        read: "move out of public lane"
+      },
+      {
+        key: "warm-absurd-punch",
+        label: "punch → care",
+        test: (message) => replicaFor(message).verdict === "warm-absurd-punch",
+        read: "joke works when contact stays warm"
+      },
+      {
+        key: "absurd-signal",
+        label: "myth → machine",
+        test: (message) => replicaFor(message).verdict === "absurd-signal",
+        read: "internal language becomes a tool"
+      },
+      {
+        key: "punch",
+        label: "score → counter",
+        test: (message) => replicaFor(message).verdict === "punch",
+        read: "short hit, fast return"
+      }
+    ];
+
+    const rows = patterns.map((pattern) => {
+      const count = filteredMessages.filter(pattern.test).length;
+      return analyticsLine(pattern.label, `${count} · ${pattern.read}`);
+    });
+
+    byId("patternState").textContent = `${filteredMessages.length} msg`;
+    byId("patternShots").innerHTML = rows.join("");
+  }
+
+  function renderTimeline() {
+    timeline.innerHTML = "";
+    const groups = new Map();
+    filteredMessages.forEach((message) => {
+      const key = monthKey(message.date);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(message);
+    });
+
+    [...groups.entries()].sort(([a], [b]) => b.localeCompare(a)).forEach(([key, items]) => {
+      const month = document.createElement("section");
+      month.className = "month";
+      month.innerHTML = `<div class="month-title"><span>${monthLabel(key)}</span><span>${items.length} msg</span></div>`;
+
+      items.sort((a, b) => b.date.localeCompare(a.date)).forEach((message) => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = `message${message.id === selectedId ? " active" : ""}`;
+        item.dataset.id = message.id;
+
+        const tracker = [
+          ["punch", message.punch],
+          ["boundary", message.boundary],
+          ["care", message.care],
+          ["risk", message.risk],
+          ["absurd", message.absurdity]
+        ].map(([label, value]) => `<span class="track${value > 1 ? " hot" : ""}">${label}:${value}</span>`).join("");
+
+        item.innerHTML = `
+          <div class="message-top">
+            <span>${formatStamp(message.date).slice(5)}</span>
+            <span>${message.actor}</span>
+            <span>${message.tags.slice(0, 3).join(" · ")}</span>
+            <span>${message.actor === "vlada" ? "+" + message.scoreVlada : "+" + message.scoreAlex}</span>
+          </div>
+          <div class="message-body">
+            <div class="message-text">${escapeHtml(message.text)}</div>
+            <div class="tracker">${tracker}</div>
+          </div>
+        `;
+
+        item.addEventListener("click", () => {
+          selectedId = message.id;
+          render();
+        });
+
+        month.appendChild(item);
+      });
+
+      timeline.appendChild(month);
+    });
+  }
+
+  function escapeHtml(value) {
+    return value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+  }
+
+  const formulationRules = [
+    { label: "punch", words: ["подъ", "подкол", "бал", "балл", "отнимешь", "harassment", "пульс", "пояс", "score", "счет", "счёт"] },
+    { label: "boundary", words: ["аккурат", "не добавляй", "не надо", "нельзя", "публич", "демо", "осторож", "инфру", "лишнее"] },
+    { label: "care", words: ["спасибо", "пониман", "беречь", "backroom", "safe", "не публич", "не буду"] },
+    { label: "risk", words: ["общую", "публич", "демо", "уволится", "скрин", "инфру", "harassment"] },
+    { label: "absurd", words: ["машин", "прибор", "пульс", "бал", "балл", "private joke", "internal panic"] }
+  ];
+
+  function matchedFormulations(message) {
+    if (message.signals && Object.keys(message.signals).length) {
+      return Object.entries(message.signals).map(([label, hits]) => ({ label, hits }));
+    }
+    const text = searchableText(message);
+    return formulationRules.map((rule) => {
+      const hits = rule.words.filter((word) => text.includes(word));
+      return { label: rule.label, hits };
+    }).filter((rule) => rule.hits.length);
+  }
+
+  function replicaFor(message) {
+    if (message.replica) return message.replica;
+    const heat = Math.max(0, ((message.hammer || 0) * 0.42) + (message.punch * 0.8) + (message.boundary * 0.55) + (message.absurdity * 0.65) - (message.risk * 0.35));
+    if (message.risk >= 2 && message.boundary >= 1) {
+      return { engine: "browser-replica-v1", verdict: "risk-boundary", confidence: 0.72, heat, read: "стоп-рамка: шутка возможна только после снятия публичного риска." };
+    }
+    if (message.punch >= 2 && message.absurdity >= 2 && message.care >= 1) {
+      return { engine: "browser-replica-v1", verdict: "warm-absurd-punch", confidence: 0.78, heat, read: "панч держится на абсурде и сохраняет контакт через care-buffer." };
+    }
+    if (message.care >= 2 && message.boundary >= 1) {
+      return { engine: "browser-replica-v1", verdict: "care-buffer", confidence: 0.74, heat, read: "основной смысл – сохранить контакт и перенести энергию в безопасный канал." };
+    }
+    if (message.absurdity >= 2) {
+      return { engine: "browser-replica-v1", verdict: "absurd-signal", confidence: 0.7, heat, read: "внутренняя мифология: приборы, формулы, агенты, meta-game." };
+    }
+    if (message.punch >= 1) {
+      return { engine: "browser-replica-v1", verdict: "punch", confidence: 0.62, heat, read: "легкий удар или счетный жест без сильной публичной опасности." };
+    }
+    return { engine: "browser-replica-v1", verdict: "plain", confidence: 0.5, heat, read: "обычная операционная реплика без заметной игровой нагрузки." };
+  }
+
+  function interpretationLabel(message) {
+    const dimensions = [
+      ["punch", message.punch],
+      ["boundary", message.boundary],
+      ["care", message.care],
+      ["risk", message.risk],
+      ["absurd", message.absurdity]
+    ].sort((a, b) => b[1] - a[1]);
+    const [primary, value] = dimensions[0];
+    if (!value) return "plain message";
+    if (primary === "punch" && message.absurdity >= 2) return "absurd punch";
+    if (primary === "boundary" && message.risk >= 2) return "risk boundary";
+    if (primary === "care" && message.boundary >= 1) return "careful repair";
+    return `${primary} signal`;
+  }
+
+  function setInterpretBar(name, value) {
+    byId(`selected${name}Graph`).style.setProperty("--w", `${Math.round((value / 3) * 100)}%`);
+    byId(`selected${name}Value`).textContent = String(value);
+  }
+
+  function renderSelected() {
+    const selected = messages.find((message) => message.id === selectedId) || filteredMessages[0];
+    if (!selected) return;
+
+    byId("selectedTime").textContent = `${formatStamp(selected.date)} · ${selected.actor}`;
+    byId("selectedMode").textContent = `${interpretationLabel(selected)} · hammer ${selected.hammer || 0}`;
+    byId("selectedQuote").textContent = selected.text;
+    byId("selectedComment").textContent = selected.comment;
+    byId("selectedPunch").textContent = pad(selected.punch);
+    byId("selectedBoundary").textContent = pad(selected.boundary);
+    byId("selectedCare").textContent = pad(selected.care);
+    byId("selectedRisk").textContent = pad(selected.risk);
+    setInterpretBar("Punch", selected.punch);
+    setInterpretBar("Boundary", selected.boundary);
+    setInterpretBar("Care", selected.care);
+    setInterpretBar("Risk", selected.risk);
+    setInterpretBar("Absurd", selected.absurdity);
+    byId("tagState").textContent = `${selected.tags.length} tags`;
+    byId("selectedTags").innerHTML = selected.tags.map((tag) => `<span class="chip${tag === "punch" || tag === "counter" || tag === "absurd" ? " hot" : ""}">${tag}</span>`).join("");
+    const matched = matchedFormulations(selected);
+    byId("formulaState").textContent = matched.length ? `${matched.length} rules` : "no hits";
+    byId("formulaSignals").innerHTML = matched.map((rule) => analyticsLine(rule.label, rule.hits.join(" · "))).join("") || '<div class="analytics-item">no formulation triggers matched</div>';
+    const replica = replicaFor(selected);
+    byId("replicaState").textContent = `${replica.engine} · ${replica.confidence}`;
+    byId("replicaSignals").innerHTML = [
+      analyticsLine("verdict", replica.verdict),
+      analyticsLine("heat", Number(replica.heat || 0).toFixed(2)),
+      analyticsLine("read", replica.read)
+    ].join("");
+  }
+
+  function render() {
+    renderScore();
+    renderPeriodGraph();
+    renderPeriodAnalytics();
+    renderPatternShots();
+    renderTimeline();
+    renderSelected();
+  }
+
+  async function loadTelegramExport(file) {
+    const json = JSON.parse(await file.text());
+    const raw = Array.isArray(json.messages) ? json.messages : [];
+    const imported = raw
+      .filter((item) => item.type === "message" && item.date && normalizeTelegramText(item.text).trim())
+      .map((item, index) => classifyMessage(
+        normalizeTelegramText(item.text).trim(),
+        String(item.from || item.from_id || "unknown"),
+        item.date,
+        index
+      ));
+
+    if (imported.length) {
+      messages = imported;
+      selectedId = messages[messages.length - 1]?.id;
+      populateRangeOptions();
+      byId("rangeSelect").value = "all";
+      byId("actorSelect").value = "all";
+      byId("liveChips").insertAdjacentHTML("afterbegin", `<span class="chip hot">${imported.length} imported</span>`);
+      applyFilters();
+    }
+  }
+
+  function addManualMessage() {
+    const input = byId("manualInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    const message = classifyMessage(text, "alex", new Date().toISOString(), messages.length + 1);
+    message.id = `manual-${Date.now()}`;
+    message.comment = "manual live event. review scoring after adding the real chat context.";
+    messages = [...messages, message];
+    selectedId = message.id;
+    populateRangeOptions();
+    byId("rangeSelect").value = "all";
+    input.value = "";
+    applyFilters();
+  }
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  async function loadLocalPersonalLedger() {
+    if (location.protocol !== "file:") return;
+    await Promise.allSettled([
+      loadScript("file:///Users/alex/Documents/_apps%20data/aim-harassment-pulse/vlada-ledger.js"),
+      loadScript("file:///Users/alex/Documents/_apps%20data/aim-harassment-pulse/analysis-summary.js")
+    ]);
+  }
+
+  function bytesFromBase64(value) {
+    return Uint8Array.from(atob(value), (char) => char.charCodeAt(0));
+  }
+
+  async function decryptBundle(bundle, passphrase) {
+    const encoded = new TextEncoder().encode(passphrase);
+    const keyMaterial = await crypto.subtle.importKey("raw", encoded, "PBKDF2", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey(
+      {
+        name: "PBKDF2",
+        salt: bytesFromBase64(bundle.kdf.salt),
+        iterations: bundle.kdf.iterations,
+        hash: bundle.kdf.hash
+      },
+      keyMaterial,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["decrypt"]
+    );
+    const decrypted = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: bytesFromBase64(bundle.cipher.iv) },
+      key,
+      bytesFromBase64(bundle.ciphertext)
+    );
+    return JSON.parse(new TextDecoder().decode(decrypted));
+  }
+
+  async function setupEncryptedUnlock() {
+    if (location.protocol === "file:") return;
+    const screen = byId("unlockScreen");
+    const form = byId("unlockForm");
+    const input = byId("unlockPassword");
+    const error = byId("unlockError");
+    let bundle;
+
+    try {
+      const response = await fetch("data/ledger.enc.json", { cache: "no-store" });
+      if (!response.ok) return;
+      bundle = await response.json();
+    } catch {
+      return;
+    }
+
+    screen.hidden = false;
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      error.textContent = "";
+      try {
+        const data = await decryptBundle(bundle, input.value);
+        setDashboardData(data.payload, data.summary);
+        screen.hidden = true;
+        input.value = "";
+      } catch {
+        error.textContent = "wrong passphrase or damaged encrypted bundle";
+      }
+    });
+  }
+
+  async function bootDashboard() {
+    await loadLocalPersonalLedger();
+    setDashboardData(window.VLADA_HISTORY, window.HAMMER_ANALYSIS);
+    await setupEncryptedUnlock();
+  }
+
+  byId("rangeSelect").addEventListener("change", applyFilters);
+  byId("actorSelect").addEventListener("change", applyFilters);
+  byId("searchInput").addEventListener("input", (event) => {
+    searchQuery = event.target.value.trim().toLowerCase();
+    applyFilters();
+  });
+  byId("resetButton").addEventListener("click", () => {
+    messages = loadedMessages.length ? loadedMessages : [...seedMessages];
+    selectedId = messages[messages.length - 1]?.id;
+    populateRangeOptions();
+    byId("rangeSelect").value = "all";
+    byId("actorSelect").value = "all";
+    applyFilters();
+  });
+  byId("manualButton").addEventListener("click", addManualMessage);
+  byId("manualInput").addEventListener("keydown", (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") addManualMessage();
+  });
+
+  window.AIMPulse = { setDashboardData };
+  bootDashboard();
+</script>
+</body>
+</html>
