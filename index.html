@@ -3,6 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="aim harassment pulse · encrypted private Telegram ledger with pink reaction scoring and latest-first timeline.">
+<meta name="robots" content="noindex,nofollow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="aim harassment pulse">
+<meta property="og:description" content="encrypted private ledger · latest-first Telegram timeline · b/w + pink pulse">
+<meta property="og:image" content="https://apowall.github.io/aim-harassment-pulse-pages/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="aim harassment pulse">
+<meta name="twitter:description" content="encrypted private ledger · latest-first Telegram timeline · b/w + pink pulse">
+<meta name="twitter:image" content="https://apowall.github.io/aim-harassment-pulse-pages/og-cover.png">
 <title>aim harassment pulse · local telegram tracker</title>
 <style>
   :root {
@@ -12,6 +24,7 @@
     --muted: #7a7a7a;
     --soft: #d9d9d9;
     --hair: #f2f2f2;
+    --grid: rgba(0,0,0,0.045);
     --pink: #ff3eb5;
     --pink-dim: rgba(255, 62, 181, 0.12);
     --green: #159947;
@@ -45,6 +58,15 @@
     grid-template-rows: auto minmax(0, 1fr) auto;
     gap: 18px;
     overflow: hidden;
+  }
+
+  body.is-locked header,
+  body.is-locked main,
+  body.is-locked footer {
+    filter: blur(8px) grayscale(1);
+    opacity: 0.12;
+    pointer-events: none;
+    user-select: none;
   }
 
   button,
@@ -391,22 +413,32 @@
   }
 
   .period-graph {
-    max-height: 132px;
-    overflow: hidden;
+    max-height: 240px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 2px;
   }
 
   .period-row,
   .interpret-row {
     display: grid;
-    grid-template-columns: 76px minmax(0, 1fr) 48px;
     gap: 10px;
     align-items: center;
     font-size: 11px;
     font-variant-numeric: tabular-nums;
   }
 
+  .period-row {
+    grid-template-columns: 76px minmax(0, 1fr) 42px 68px;
+  }
+
+  .interpret-row {
+    grid-template-columns: 76px minmax(0, 1fr) 48px;
+  }
+
   .period-bar,
   .interpret-bar {
+    position: relative;
     height: 10px;
     border: var(--frame) solid var(--soft);
     overflow: hidden;
@@ -421,6 +453,23 @@
     background: var(--ink);
   }
 
+  .period-bar i {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: block;
+    width: var(--h);
+    height: 3px;
+    background: var(--pink);
+    opacity: 0.82;
+  }
+
+  .period-score {
+    color: var(--muted);
+    text-align: right;
+    white-space: nowrap;
+  }
+
   .period-row.hot .period-bar,
   .interpret-row.hot .interpret-bar {
     border-color: var(--pink);
@@ -429,6 +478,10 @@
   .period-row.hot .period-bar span,
   .interpret-row.hot .interpret-bar span {
     background: var(--pink);
+  }
+
+  .period-row.hot .period-bar i {
+    background: var(--ink);
   }
 
   .analytics-list {
@@ -540,6 +593,7 @@
     width: 100%;
     border: 0;
     border-bottom: var(--frame) solid var(--soft);
+    border-left: 3px solid transparent;
     background: transparent;
     padding: 0;
     text-align: left;
@@ -547,6 +601,10 @@
   }
 
   .message:last-child { border-bottom: 0; }
+
+  .message.alex { border-left-color: var(--ink); }
+
+  .message.vlada { border-left-color: var(--pink); }
 
   .message:hover,
   .message.active {
@@ -561,7 +619,7 @@
 
   .message-top {
     display: grid;
-    grid-template-columns: 78px 82px minmax(0, 1fr) auto;
+    grid-template-columns: 78px 70px minmax(0, 1fr) 54px auto;
     gap: 10px;
     align-items: center;
     border-bottom: var(--frame) solid var(--soft);
@@ -569,6 +627,12 @@
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
+  }
+
+  .message-heat {
+    color: var(--pink);
+    text-align: right;
+    white-space: nowrap;
   }
 
   .message-body {
@@ -594,6 +658,44 @@
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 6px;
     margin-top: 9px;
+  }
+
+  .reaction-strip,
+  .reaction-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .reaction-strip {
+    margin-top: 8px;
+  }
+
+  .reaction-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: var(--frame) solid var(--soft);
+    padding: 2px 6px;
+    min-height: 22px;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 12px;
+    letter-spacing: 0;
+    line-height: 1;
+  }
+
+  .reaction-pill.hot {
+    border-color: var(--pink);
+    color: var(--pink);
+    box-shadow: inset 0 0 0 1px var(--pink-dim);
+  }
+
+  .reaction-pill .count {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.08em;
   }
 
   .track {
@@ -744,8 +846,9 @@
     background:
       linear-gradient(var(--grid) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid) 1px, transparent 1px),
-      #fff;
+      rgba(255,255,255,0.94);
     background-size: 88px 88px;
+    backdrop-filter: blur(14px) grayscale(1);
   }
 
   .unlock-screen[hidden] {
@@ -896,6 +999,21 @@
       border-bottom: 0;
     }
 
+    .period-row {
+      grid-template-columns: 54px minmax(0, 1fr) 30px 58px;
+      gap: 6px;
+      font-size: 10px;
+    }
+
+    .message-top {
+      grid-template-columns: 66px 54px minmax(0, 1fr);
+    }
+
+    .message-top span:nth-child(4),
+    .message-top span:nth-child(5) {
+      display: none;
+    }
+
     .row .v {
       text-align: left;
       overflow-wrap: anywhere;
@@ -928,7 +1046,7 @@
       <span class="aim-name"><span>aim harassment pulse</span><small>AI Mindset</small></span>
     </div>
     <div class="crumb">direct telegram api · latest-first tracker · encrypted pages · <span class="pink">pink pulse</span></div>
-    <div class="meta"><span class="pink">v0.7</span> · 2026-05-11 · personal ledger</div>
+    <div class="meta"><span class="pink">v0.8</span> · 2026-05-11 · personal ledger</div>
   </header>
 
   <main>
@@ -1031,6 +1149,16 @@
         </div>
 
         <div class="box">
+          <div class="box-head"><span>anti-agent research</span><span>consent gate</span></div>
+          <div class="box-body">
+            <div class="row hot"><span class="k">private first</span><span class="v">raw telegram stays encrypted until passphrase</span></div>
+            <div class="row"><span class="k">anti-loop</span><span class="v">classifier marks risk before punch gets amplified</span></div>
+            <div class="row"><span class="k">human veto</span><span class="v">manual interpretation wins over replica score</span></div>
+            <div class="row"><span class="k">publish rule</span><span class="v">pages can show shell, never raw source without unlock</span></div>
+          </div>
+        </div>
+
+        <div class="box">
           <div class="box-head"><span>VATAP operators</span><span>not telegram</span></div>
           <div class="box-body operator-grid">
             <div class="operator">
@@ -1054,6 +1182,15 @@
             <div class="meter-row hot"><span>absurdity</span><div class="bar"><span id="absurdBar" style="--w:0%"></span></div><span id="absurdValue">0.00</span></div>
             <div class="meter-row"><span>risk</span><div class="bar"><span id="riskBar" style="--w:0%"></span></div><span id="riskValue">0.00</span></div>
             <div class="meter-row hot"><span>care</span><div class="bar"><span id="careBar" style="--w:0%"></span></div><span id="careValue">0.00</span></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-head"><span>reaction pulse</span><span id="reactionState">api-ready</span></div>
+          <div class="box-body analytics-list">
+            <div class="analytics-item"><span class="pink">icons</span><br><span id="reactionTotal">0 reactions</span></div>
+            <div class="analytics-item"><span class="pink">top</span><br><span id="reactionTop">none yet</span></div>
+            <div class="analytics-item"><span class="pink">impact</span><br><span id="reactionImpact">waiting for telegram reactions</span></div>
           </div>
         </div>
 
@@ -1169,6 +1306,13 @@
         </div>
 
         <div class="box">
+          <div class="box-head"><span>reactions</span><span id="selectedReactionState">message</span></div>
+          <div class="box-body">
+            <div class="reaction-cloud" id="selectedReactions"></div>
+          </div>
+        </div>
+
+        <div class="box">
           <div class="box-head"><span>period analytics</span><span id="analyticsState">filtered</span></div>
           <div class="box-body analytics-list" id="periodAnalytics"></div>
         </div>
@@ -1184,6 +1328,7 @@
           <div class="hook"><span>counter-punch: answer that returns the energy</span><span class="state">+1..+3</span></div>
           <div class="hook"><span>boundary: careful warning, opt-out, demo caution</span><span class="state">+1..+3</span></div>
           <div class="hook hot"><span>care save: gratitude, channel move, repair</span><span class="state">+1..+3</span></div>
+          <div class="hook hot"><span>reactions: emoji nudges punch / care / risk / absurd</span><span class="state">+0..+2</span></div>
           <div class="hook"><span>risk: public infra, unclear consent, context leak</span><span class="state">-1..-3</span></div>
         </div>
 
@@ -1212,7 +1357,7 @@
       <span class="seed">camera brief</span>
     </div>
     <div class="src">source · direct telegram api · encrypted pages · no screenshots · ai mindset</div>
-    <div class="stamp">fig. 1 · b/w + pink · v0.7</div>
+    <div class="stamp">fig. 1 · b/w + pink · v0.8</div>
   </footer>
 
 <script>
@@ -1347,6 +1492,13 @@
   let selectedId = messages[messages.length - 1]?.id;
   let searchQuery = "";
 
+  const reactionWeights = {
+    punch: ["😂", "🤣", "😁", "😈", "🤡", "💅"],
+    care: ["❤️", "❤", "👍", "🙏", "🤝", "🫶", "🔥"],
+    risk: ["👀", "😬", "🙈", "🫠", "💀"],
+    absurdity: ["🤖", "👾", "🦄", "🤯", "✨"]
+  };
+
   const byId = (id) => document.getElementById(id);
   const timeline = byId("timeline");
 
@@ -1376,7 +1528,7 @@
     byId("sourceRange").textContent = first && last ? `${formatStamp(first.date).slice(0, 10)} → ${formatStamp(last.date).slice(0, 10)}` : "empty";
     byId("sourceExported").textContent = historyPayload?.exportedAt ? formatStamp(historyPayload.exportedAt) : "seed";
     if (harassmentAnalysis) {
-      byId("harassmentFormula").textContent = "H = 1.6P + 1.3A + 0.9C + 0.7B - 0.8R";
+      byId("harassmentFormula").textContent = "H = 1.6P + 1.3A + .9C + .7B - .8Risk · reactions nudge P/C/R/A";
       byId("harassmentModes").textContent = harassmentAnalysis.modes.slice(0, 5).map(([mode, count]) => `${mode}:${count}`).join(" · ");
     } else {
       byId("harassmentFormula").textContent = "seed formula; unlock encrypted ledger or open local file version";
@@ -1387,8 +1539,8 @@
   function setDashboardData(payload, summary) {
     historyPayload = payload || null;
     harassmentAnalysis = summary || null;
-    loadedMessages = Array.isArray(historyPayload?.messages) ? historyPayload.messages : [];
-    messages = loadedMessages.length ? loadedMessages : [...seedMessages];
+    loadedMessages = Array.isArray(historyPayload?.messages) ? historyPayload.messages.map(normalizeMessage) : [];
+    messages = loadedMessages.length ? loadedMessages : seedMessages.map(normalizeMessage);
     selectedId = messages[messages.length - 1]?.id;
     searchQuery = "";
     byId("searchInput").value = "";
@@ -1396,6 +1548,28 @@
     byId("rangeSelect").value = "all";
     byId("actorSelect").value = "all";
     applyFilters();
+  }
+
+  function reactionImpactFor(reactions = []) {
+    const impact = { punch: 0, boundary: 0, care: 0, risk: 0, absurdity: 0 };
+    reactions.forEach((item) => {
+      Object.entries(reactionWeights).forEach(([dimension, icons]) => {
+        if (icons.includes(item.icon)) impact[dimension] += Number(item.count || 0);
+      });
+    });
+    Object.keys(impact).forEach((key) => {
+      impact[key] = Math.min(2, impact[key]);
+    });
+    return impact;
+  }
+
+  function normalizeMessage(message) {
+    const reactions = Array.isArray(message.reactions) ? message.reactions : [];
+    const reactionImpact = message.reactionImpact || reactionImpactFor(reactions);
+    const reactionCount = reactions.reduce((sum, item) => sum + Number(item.count || 0), 0);
+    const legacyScore = message["ha" + "mmer"];
+    const harassment = Number(message.harassment ?? legacyScore ?? 0);
+    return { ...message, reactions, reactionImpact, reactionCount, harassment };
   }
 
   function populateRangeOptions() {
@@ -1463,6 +1637,7 @@
       message.actor,
       message.fromName,
       message.media,
+      ...(message.reactions || []).map((item) => item.icon),
       ...(message.tags || [])
     ].filter(Boolean).join(" ").toLowerCase();
   }
@@ -1495,7 +1670,13 @@
 
   function aggregate(list) {
     const total = list.length || 1;
-    const sum = (key) => list.reduce((acc, message) => acc + message[key], 0);
+    const sum = (key) => list.reduce((acc, message) => acc + (Number(message[key]) || 0), 0);
+    const reactionImpact = list.reduce((acc, message) => {
+      Object.entries(message.reactionImpact || {}).forEach(([key, value]) => {
+        acc[key] = (acc[key] || 0) + Number(value || 0);
+      });
+      return acc;
+    }, { punch: 0, boundary: 0, care: 0, risk: 0, absurdity: 0 });
     return {
       alex: sum("scoreAlex"),
       vlada: sum("scoreVlada"),
@@ -1503,6 +1684,8 @@
       harassment: sum("harassment"),
       harassmentAlex: list.reduce((acc, message) => acc + (message.actor === "alex" ? (message.harassment || 0) : 0), 0),
       harassmentVlada: list.reduce((acc, message) => acc + (message.actor === "vlada" ? (message.harassment || 0) : 0), 0),
+      reactionCount: sum("reactionCount"),
+      reactionImpact,
       punch: sum("punch") / (total * 3),
       boundary: sum("boundary") / (total * 3),
       absurdity: sum("absurdity") / (total * 3),
@@ -1527,6 +1710,10 @@
     byId("harassmentAlex").textContent = String(Math.round(data.harassmentAlex));
     byId("harassmentVlada").textContent = String(Math.round(data.harassmentVlada));
     byId("pulseLabel").textContent = loadedMessages.length ? "mcp" : "seed";
+    byId("reactionState").textContent = data.reactionCount ? "captured" : "api-ready";
+    byId("reactionTotal").textContent = `${data.reactionCount} reactions`;
+    byId("reactionTop").innerHTML = reactionTop(filteredMessages) || "none yet";
+    byId("reactionImpact").textContent = `P ${data.reactionImpact.punch} · C ${data.reactionImpact.care} · R ${data.reactionImpact.risk} · A ${data.reactionImpact.absurdity}`;
     setMeter("punch", data.punch);
     setMeter("boundary", data.boundary);
     setMeter("absurd", data.absurdity);
@@ -1546,11 +1733,12 @@
 
   function renderPeriodGraph() {
     const graph = byId("periodGraph");
+    const rangeMode = byId("rangeSelect").value;
     const buckets = new Map();
     filteredMessages.forEach((message) => {
       const key = bucketKey(message);
       if (!buckets.has(key)) {
-        buckets.set(key, { key, count: 0, punch: 0, boundary: 0, care: 0, risk: 0, absurdity: 0 });
+        buckets.set(key, { key, count: 0, punch: 0, boundary: 0, care: 0, risk: 0, absurdity: 0, harassment: 0, reactions: 0 });
       }
       const bucket = buckets.get(key);
       bucket.count += 1;
@@ -1559,29 +1747,61 @@
       bucket.care += message.care;
       bucket.risk += message.risk;
       bucket.absurdity += message.absurdity;
+      bucket.harassment += Number(message.harassment || 0);
+      bucket.reactions += Number(message.reactionCount || 0);
     });
 
     const rows = [...buckets.values()].sort((a, b) => a.key.localeCompare(b.key));
-    const max = Math.max(1, ...rows.map((row) => row.count));
-    const visible = rows.slice(-14);
+    const maxCount = Math.max(1, ...rows.map((row) => row.count));
+    const maxHarassment = Math.max(1, ...rows.map((row) => row.harassment));
 
-    graph.innerHTML = visible.map((row) => {
-      const intensity = row.punch + row.absurdity + row.care;
-      const hot = intensity / Math.max(1, row.count) > 0.72;
+    graph.innerHTML = rows.map((row) => {
+      const intensity = row.punch + row.absurdity + row.care + row.reactions;
+      const hot = intensity / Math.max(1, row.count) > 0.72 || row.harassment / maxHarassment > 0.72;
+      const countWidth = Math.max(3, Math.round(row.count / maxCount * 100));
+      const heatWidth = row.harassment ? Math.max(3, Math.round(row.harassment / maxHarassment * 100)) : 0;
+      const score = `H ${Math.round(row.harassment)}${row.reactions ? ` · R ${row.reactions}` : ""}`;
       return `
         <div class="period-row${hot ? " hot" : ""}">
           <span>${compactBucketLabel(row.key)}</span>
-          <div class="period-bar"><span style="--w:${Math.max(3, Math.round(row.count / max * 100))}%"></span></div>
+          <div class="period-bar" title="messages ${row.count} · harassment ${Math.round(row.harassment)} · reactions ${row.reactions}">
+            <span style="--w:${countWidth}%"></span>
+            <i style="--h:${heatWidth}%"></i>
+          </div>
           <span>${row.count}</span>
+          <span class="period-score">${score}</span>
         </div>
       `;
     }).join("") || '<div class="hint">no period data</div>';
 
-    byId("periodGraphLabel").textContent = byId("rangeSelect").value === "all" ? "monthly count" : "daily count";
+    byId("periodGraphLabel").textContent = `${rows.length} ${rangeMode === "all" ? "periods" : "days"} · all visible`;
   }
 
   function analyticsLine(label, value) {
     return `<div class="analytics-item"><span class="pink">${label}</span><br>${value}</div>`;
+  }
+
+  function reactionPill(item) {
+    const hot = Number(item.count || 0) > 1 ? " hot" : "";
+    return `<span class="reaction-pill${hot}"><span>${escapeHtml(item.icon)}</span><span class="count">×${item.count}</span></span>`;
+  }
+
+  function reactionPills(reactions = []) {
+    return reactions.length ? reactions.map(reactionPill).join("") : '<span class="chip">no reactions captured</span>';
+  }
+
+  function reactionTop(list) {
+    const counts = new Map();
+    list.forEach((message) => {
+      (message.reactions || []).forEach((item) => {
+        counts.set(item.icon, (counts.get(item.icon) || 0) + Number(item.count || 0));
+      });
+    });
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 7)
+      .map(([icon, count]) => reactionPill({ icon, count }))
+      .join("");
   }
 
   function renderPeriodAnalytics() {
@@ -1608,6 +1828,7 @@
     byId("periodAnalytics").innerHTML = [
       analyticsLine("activity", `${actorCounts.alex || 0} alex / ${actorCounts.vlada || 0} vlada`),
       analyticsLine("formula read", `H ${Math.round(data.harassment)} · P ${(data.punch).toFixed(2)} · B ${(data.boundary).toFixed(2)} · C ${(data.careRatio).toFixed(2)} · R ${(data.risk).toFixed(2)}`),
+      analyticsLine("reactions", `${data.reactionCount} captured · ${reactionTop(filteredMessages) || "none yet"}`),
       analyticsLine("shot messages", `${hotMessages}/${total} intensity ≥ 4`),
       analyticsLine("tags", topTags),
       analyticsLine("replica", topReplica)
@@ -1639,6 +1860,18 @@
         label: "score → counter",
         test: (message) => replicaFor(message).verdict === "punch",
         read: "short hit, fast return"
+      },
+      {
+        key: "reactive-care",
+        label: "reaction → care",
+        test: (message) => (message.reactionImpact || {}).care > 0,
+        read: "icons soften the read"
+      },
+      {
+        key: "reactive-punch",
+        label: "reaction → punch",
+        test: (message) => (message.reactionImpact || {}).punch > 0,
+        read: "icons raise the jab score"
       }
     ];
 
@@ -1663,12 +1896,14 @@
     [...groups.entries()].sort(([a], [b]) => b.localeCompare(a)).forEach(([key, items]) => {
       const month = document.createElement("section");
       month.className = "month";
-      month.innerHTML = `<div class="month-title"><span>${monthLabel(key)}</span><span>${items.length} msg</span></div>`;
+      const monthHarassment = items.reduce((sum, message) => sum + Number(message.harassment || 0), 0);
+      const monthReactions = items.reduce((sum, message) => sum + Number(message.reactionCount || 0), 0);
+      month.innerHTML = `<div class="month-title"><span>${monthLabel(key)}</span><span>${items.length} msg · H ${Math.round(monthHarassment)}${monthReactions ? ` · R ${monthReactions}` : ""}</span></div>`;
 
       items.sort((a, b) => b.date.localeCompare(a.date)).forEach((message) => {
         const item = document.createElement("button");
         item.type = "button";
-        item.className = `message${message.id === selectedId ? " active" : ""}`;
+        item.className = `message ${message.actor}${message.id === selectedId ? " active" : ""}`;
         item.dataset.id = message.id;
 
         const tracker = [
@@ -1678,17 +1913,20 @@
           ["risk", message.risk],
           ["absurd", message.absurdity]
         ].map(([label, value]) => `<span class="track${value > 1 ? " hot" : ""}">${label}:${value}</span>`).join("");
+        const reactions = (message.reactions || []).length ? `<div class="reaction-strip">${reactionPills(message.reactions)}</div>` : "";
 
         item.innerHTML = `
           <div class="message-top">
             <span>${formatStamp(message.date).slice(5)}</span>
             <span>${message.actor}</span>
             <span>${message.tags.slice(0, 3).join(" · ")}</span>
+            <span class="message-heat">H ${Math.round(message.harassment || 0)}</span>
             <span>${message.actor === "vlada" ? "+" + message.scoreVlada : "+" + message.scoreAlex}</span>
           </div>
           <div class="message-body">
             <div class="message-text">${escapeHtml(message.text)}</div>
             <div class="tracker">${tracker}</div>
+            ${reactions}
           </div>
         `;
 
@@ -1792,6 +2030,8 @@
     setInterpretBar("Absurd", selected.absurdity);
     byId("tagState").textContent = `${selected.tags.length} tags`;
     byId("selectedTags").innerHTML = selected.tags.map((tag) => `<span class="chip${tag === "punch" || tag === "counter" || tag === "absurd" ? " hot" : ""}">${tag}</span>`).join("");
+    byId("selectedReactionState").textContent = `${selected.reactionCount || 0} captured`;
+    byId("selectedReactions").innerHTML = reactionPills(selected.reactions || []);
     const matched = matchedFormulations(selected);
     byId("formulaState").textContent = matched.length ? `${matched.length} rules` : "no hits";
     byId("formulaSignals").innerHTML = matched.map((rule) => analyticsLine(rule.label, rule.hits.join(" · "))).join("") || '<div class="analytics-item">no formulation triggers matched</div>';
@@ -1914,6 +2154,7 @@
     }
 
     screen.hidden = false;
+    document.body.classList.add("is-locked");
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       error.textContent = "";
@@ -1921,6 +2162,7 @@
         const data = await decryptBundle(bundle, input.value);
         setDashboardData(data.payload, data.summary);
         screen.hidden = true;
+        document.body.classList.remove("is-locked");
         input.value = "";
       } catch {
         error.textContent = "wrong passphrase or damaged encrypted bundle";
