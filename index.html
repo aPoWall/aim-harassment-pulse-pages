@@ -6,14 +6,15 @@
 <meta name="description" content="aim harassment pulse · encrypted private Telegram ledger with pink reaction scoring and latest-first timeline.">
 <meta name="robots" content="noindex,nofollow">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://apowall.github.io/aim-harassment-pulse-pages/">
 <meta property="og:title" content="aim harassment pulse">
-<meta property="og:description" content="encrypted private ledger · latest-first Telegram timeline · b/w + pink pulse">
+<meta property="og:description" content="private encrypted pulse · latest-first timeline · AI Mindset">
 <meta property="og:image" content="https://apowall.github.io/aim-harassment-pulse-pages/og-cover.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="aim harassment pulse">
-<meta name="twitter:description" content="encrypted private ledger · latest-first Telegram timeline · b/w + pink pulse">
+<meta name="twitter:description" content="private encrypted pulse · latest-first timeline · AI Mindset">
 <meta name="twitter:image" content="https://apowall.github.io/aim-harassment-pulse-pages/og-cover.png">
 <title>aim harassment pulse · local telegram tracker</title>
 <style>
@@ -103,27 +104,12 @@
     gap: 12px;
   }
 
-  .aim-mark {
-    display: inline-grid;
-    place-items: center;
-    position: relative;
-    overflow: hidden;
+  .aim-logo {
     width: 32px;
     height: 32px;
     border: var(--frame) solid var(--ink);
-    color: var(--pink);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-  }
-
-  .aim-mark::after {
-    content: "";
-    position: absolute;
-    width: 42px;
-    height: 1px;
-    background: var(--pink);
-    transform: rotate(-32deg);
-    opacity: 0.72;
+    object-fit: cover;
+    background: var(--ink);
   }
 
   .aim-name {
@@ -413,7 +399,7 @@
   }
 
   .period-graph {
-    max-height: 240px;
+    max-height: 118px;
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: 2px;
@@ -429,7 +415,9 @@
   }
 
   .period-row {
-    grid-template-columns: 76px minmax(0, 1fr) 42px 68px;
+    grid-template-columns: 60px minmax(0, 1fr) 32px 54px;
+    gap: 8px;
+    font-size: 10px;
   }
 
   .interpret-row {
@@ -443,6 +431,27 @@
     border: var(--frame) solid var(--soft);
     overflow: hidden;
     background: var(--paper);
+  }
+
+  .pipeline-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .pipeline-strip span {
+    border: var(--frame) solid var(--soft);
+    padding: 5px 8px;
+    color: var(--muted);
+  }
+
+  .pipeline-strip span.hot {
+    border-color: var(--pink);
+    color: var(--pink);
   }
 
   .period-bar span,
@@ -537,32 +546,6 @@
     margin-top: 3px;
   }
 
-  .phase-grid {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .phase {
-    border: var(--frame) solid var(--ink);
-    padding: 9px;
-    min-height: 66px;
-    background: var(--paper);
-  }
-
-  .phase .n {
-    color: var(--pink);
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-
-  .phase .t {
-    margin-top: 4px;
-    font-size: 11px;
-    overflow-wrap: anywhere;
-  }
-
   .timeline {
     min-height: 0;
     display: grid;
@@ -619,11 +602,11 @@
 
   .message-top {
     display: grid;
-    grid-template-columns: 78px 70px minmax(0, 1fr) 54px auto;
-    gap: 10px;
+    grid-template-columns: 66px 58px minmax(0, 1fr) 44px 34px;
+    gap: 8px;
     align-items: center;
     border-bottom: var(--frame) solid var(--soft);
-    padding: 8px 10px;
+    padding: 7px 9px 4px;
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -636,28 +619,32 @@
   }
 
   .message-body {
-    padding: 10px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 214px;
+    gap: 10px;
+    align-items: start;
+    padding: 4px 9px 8px;
   }
 
   .message-text {
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 0.03em;
     overflow-wrap: anywhere;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     overflow: hidden;
   }
 
   .message.active .message-text {
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 3;
   }
 
   .tracker {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 6px;
-    margin-top: 9px;
+    gap: 4px;
+    margin-top: 0;
   }
 
   .reaction-strip,
@@ -700,9 +687,9 @@
 
   .track {
     border: var(--frame) solid var(--soft);
-    padding: 3px 5px;
+    padding: 2px 4px;
     color: var(--muted);
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 0.1em;
     text-transform: lowercase;
     overflow: hidden;
@@ -934,9 +921,6 @@
       overflow: visible;
     }
 
-    .phase-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
   }
 
   @media (max-width: 560px) {
@@ -968,7 +952,6 @@
     }
 
     .control-grid,
-    .phase-grid,
     .score-grid,
     .tracker,
     .composer,
@@ -1003,6 +986,10 @@
       grid-template-columns: 54px minmax(0, 1fr) 30px 58px;
       gap: 6px;
       font-size: 10px;
+    }
+
+    .message-body {
+      grid-template-columns: 1fr;
     }
 
     .message-top {
@@ -1042,10 +1029,10 @@
 
   <header>
     <div class="brand">
-      <span class="aim-mark">AI</span>
+      <img class="aim-logo" src="aim-logo.png" alt="AI Mindset">
       <span class="aim-name"><span>aim harassment pulse</span><small>AI Mindset</small></span>
     </div>
-    <div class="crumb">direct telegram api · latest-first tracker · encrypted pages · <span class="pink">pink pulse</span></div>
+    <div class="crumb">telegram api · encrypted ledger · <span class="pink">latest first</span></div>
     <div class="meta"><span class="pink">v0.8</span> · 2026-05-11 · personal ledger</div>
   </header>
 
@@ -1213,13 +1200,13 @@
         <div class="timeline-shell">
           <div class="box">
             <div class="box-head"><span>pipeline</span><span>direct API → encrypted ledger</span></div>
-            <div class="box-body phase-grid">
-              <div class="phase"><div class="n">01</div><div class="t">pull telegram api</div></div>
-              <div class="phase"><div class="n">02</div><div class="t">normalize messages</div></div>
-              <div class="phase"><div class="n">03</div><div class="t">tag punch / care</div></div>
-              <div class="phase"><div class="n">04</div><div class="t">score both sides</div></div>
-              <div class="phase"><div class="n">05</div><div class="t">newest first</div></div>
-              <div class="phase"><div class="n">06</div><div class="t">encrypt pages</div></div>
+            <div class="box-body pipeline-strip">
+              <span>api</span>
+              <span>normalize</span>
+              <span class="hot">score</span>
+              <span>reactions</span>
+              <span class="hot">latest</span>
+              <span>encrypt</span>
             </div>
           </div>
 
@@ -1231,17 +1218,11 @@
           <div class="timeline" id="timeline"></div>
 
           <div class="box">
-            <div class="box-head"><span>manual append</span><span>fresh message</span></div>
-            <div class="box-body">
-              <div class="composer">
-                <textarea id="manualInput" placeholder="вставь новое telegram-сообщение или цитату. оно добавится как live event в timeline"></textarea>
-                <button class="button" id="manualButton" type="button">add</button>
-              </div>
-              <div class="chips" id="liveChips">
-                <span class="chip hot">historical seed</span>
-                <span class="chip">full dump ready</span>
-                <span class="chip">no screenshots</span>
-              </div>
+            <div class="box-head"><span>sync state</span><span>real-time slice</span></div>
+            <div class="box-body chips" id="liveChips">
+              <span class="chip hot">api merge</span>
+              <span class="chip">encrypted pages</span>
+              <span class="chip">no screenshots</span>
             </div>
           </div>
         </div>
@@ -1751,7 +1732,7 @@
       bucket.reactions += Number(message.reactionCount || 0);
     });
 
-    const rows = [...buckets.values()].sort((a, b) => a.key.localeCompare(b.key));
+    const rows = [...buckets.values()].sort((a, b) => b.key.localeCompare(a.key));
     const maxCount = Math.max(1, ...rows.map((row) => row.count));
     const maxHarassment = Math.max(1, ...rows.map((row) => row.harassment));
 
@@ -1760,7 +1741,7 @@
       const hot = intensity / Math.max(1, row.count) > 0.72 || row.harassment / maxHarassment > 0.72;
       const countWidth = Math.max(3, Math.round(row.count / maxCount * 100));
       const heatWidth = row.harassment ? Math.max(3, Math.round(row.harassment / maxHarassment * 100)) : 0;
-      const score = `H ${Math.round(row.harassment)}${row.reactions ? ` · R ${row.reactions}` : ""}`;
+      const score = `H ${Math.round(row.harassment)}`;
       return `
         <div class="period-row${hot ? " hot" : ""}">
           <span>${compactBucketLabel(row.key)}</span>
@@ -2076,22 +2057,6 @@
     }
   }
 
-  function addManualMessage() {
-    const input = byId("manualInput");
-    const text = input.value.trim();
-    if (!text) return;
-
-    const message = classifyMessage(text, "alex", new Date().toISOString(), messages.length + 1);
-    message.id = `manual-${Date.now()}`;
-    message.comment = "manual live event. review scoring after adding the real chat context.";
-    messages = [...messages, message];
-    selectedId = message.id;
-    populateRangeOptions();
-    byId("rangeSelect").value = "all";
-    input.value = "";
-    applyFilters();
-  }
-
   function loadScript(src) {
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");
@@ -2190,11 +2155,6 @@
     byId("actorSelect").value = "all";
     applyFilters();
   });
-  byId("manualButton").addEventListener("click", addManualMessage);
-  byId("manualInput").addEventListener("keydown", (event) => {
-    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") addManualMessage();
-  });
-
   window.AIMPulse = { setDashboardData };
   bootDashboard();
 </script>
